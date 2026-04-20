@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aditya Saxena</title>
+  <link rel="icon" type="image/jpeg" href="melkd.jpg" />
+  <link rel="apple-touch-icon" href="melkd.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+
+    /* ── Reset & base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    /* ── CSS variables ── */
+    :root {
+      --bg:          #0e0e0e;
+      --bg-sub:      #161616;
+      --bg-hover:    #1a1a1a;
+      --text:        #bebebe;
+      --text-dim:    #555;
+      --text-bright: #e8e8e8;
+      --accent:      #6a9fb5;
+      --accent-dim:  #284d5c;
+      --border:      #202020;
+      --tag-bg:      #171717;
+      --shadow:      rgba(0,0,0,0.5);
+    }
+    :root.light {
+      --bg:          #f9f8f5;
+      --bg-sub:      #f0efe9;
+      --bg-hover:    #eae9e2;
+      --text:        #3d3d3d;
+      --text-dim:    #aaa;
+      --text-bright: #111;
+      --accent:      #2d7a96;
+      --accent-dim:  #b8d8e4;
+      --border:      #ddd;
+      --tag-bg:      #eaeae7;
+      --shadow:      rgba(0,0,0,0.08);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'EB Garamond', 'Georgia', serif;
+      font-size: 16px;
+      line-height: 1.82;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 52px 28px 120px;
+      transition: background 0.25s, color 0.25s;
+    }
+
+    /* ── Theme toggle ── */
+    .theme-btn {
+      position: fixed;
+      top: 18px;
+      right: 22px;
+      background: var(--bg-sub);
+      border: 1px solid var(--border);
+      color: var(--text-bright);
+      font-size: 16px;
+      line-height: 1;
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, transform 0.2s;
+      z-index: 100;
+    }
+    .theme-btn:hover {
+      background: var(--bg-hover);
+      border-color: var(--accent-dim);
+      transform: rotate(20deg);
+    }
+
+    /* ── Hero header: photo + identity ── */
+    .hero {
+      display: grid;
+      grid-template-columns: 158px 1fr;
+      gap: 32px;
+      align-items: start;
+      margin-bottom: 48px;
+    }
+
+    .hero-photo {
+      width: 158px;
+      height: 192px;
+      object-fit: cover;
+      object-position: top center;
+      border-radius: 3px;
+      display: block;
+      filter: grayscale(10%);
+      box-shadow: 0 4px 24px var(--shadow);
+      transition: filter 0.3s;
+    }
+    .hero-photo:hover { filter: grayscale(0%); }
+
+    .hero-body { padding-top: 4px; }
+
+    .hero-name {
+      font-family: 'Inter', sans-serif;
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--text-bright);
+      letter-spacing: -0.01em;
+      margin-bottom: 6px;
+      line-height: 1.15;
+    }
+
+    .hero-role {
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      margin-bottom: 18px;
+      line-height: 1.6;
+      opacity: 0.9;
+    }
+
+    .hero-bio {
+      font-size: 14.5px;
+      color: var(--text);
+      line-height: 1.75;
+      margin-bottom: 20px;
+    }
+
+    .hero-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    .hero-links a {
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
+      font-size: 11.5px;
+      color: var(--text-dim);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      padding: 4px 11px;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+      border-radius: 2px;
+    }
+    .hero-links a:hover {
+      color: var(--accent);
+      border-color: var(--accent-dim);
+      background: var(--bg-sub);
+    }
+
+    /* ── Nav ── */
+    nav {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 0;
+    }
+    nav a {
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
+      font-size: 12.5px;
+      color: var(--text-dim);
+      text-decoration: none;
+      padding: 8px 18px 8px 0;
+      margin-right: 4px;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    nav a:hover,
+    nav a.active {
+      color: var(--text-bright);
+      border-bottom-color: var(--accent);
+    }
+
+    /* ── Pages ── */
+    .page         { display: none; padding-top: 38px; }
+    .page.active  { display: block; }
+
+    /* ── About extras ── */
+    .about-extra {
+      margin-top: 28px;
+      font-size: 14.5px;
+      color: var(--text);
+      line-height: 1.75;
+    }
+    .about-extra p { margin-bottom: 12px; }
+    .about-extra p:last-child { margin-bottom: 0; }
+
+    .award-block {
+      margin-top: 28px;
+      padding: 13px 16px;
+      border-left: 2px solid var(--accent-dim);
+      background: var(--bg-sub);
+      font-size: 13.5px;
+      color: var(--text-dim);
+      line-height: 1.7;
+    }
+    .award-block strong {
+      color: var(--text);
+      font-weight: normal;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    /* ── Section label ── */
+    .section-label {
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-dim);
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    /* ── OSS contributions ── */
+    .contrib-list {
+      list-style: none;
+      margin-bottom: 52px;
+    }
+    .contrib-list li {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 14px;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--border);
+      align-items: baseline;
+      transition: background 0.12s;
+    }
+    .contrib-repo {
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
+      font-size: 12.5px;
+      color: var(--accent);
+    }
+    .contrib-repo a { color: inherit; text-decoration: none; }
+    .contrib-repo a:hover { text-decoration: underline; }
+    .contrib-desc { font-size: 14px; color: var(--text); }
+    .contrib-desc code {
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    /* ── Projects ── */
+    .project-item {
+      padding: 22px 0 26px;
+      border-bottom: 1px solid var(--border);
+    }
+    .project-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .project-header {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+    .project-name {
+      font-size: 16px;
+      color: var(--text-bright);
+    }
+    .project-name a { color: inherit; text-decoration: none; }
+    .project-name a:hover { color: var(--accent); }
+    .project-tagline {
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
+      font-size: 11.5px;
+      color: var(--text-dim);
+    }
+    .project-desc {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.75;
+    }
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 12px;
+    }
+    .tag {
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+      background: var(--tag-bg);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      border-radius: 2px;
+    }
+
+    /* ── News ── */
+    .news-list { list-style: none; }
+    .news-item {
+      display: grid;
+      grid-template-columns: 88px 1fr;
+      gap: 18px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      align-items: baseline;
+    }
+    .news-date {
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
+      font-size: 12px;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+    .news-text { font-size: 14px; color: var(--text); }
+    .news-text a { color: var(--accent); text-decoration: none; }
+    .news-text a:hover { text-decoration: underline; }
+
+    /* ── Responsive ── */
+    @media (max-width: 540px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+      .hero-photo {
+        width: 120px;
+        height: 145px;
+      }
+      .contrib-list li {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar       { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); }
+
+  </style>
+</head>
+<body>
+
+  <button class="theme-btn" id="themeBtn" title="Toggle theme">☀︎</button>
+
+  <!-- ── Hero ── -->
+  <div class="hero">
+    <img class="hero-photo" src="melkd.jpg" alt="Aditya Saxena" />
+
+    <div class="hero-body">
+      <h1 class="hero-name">Aditya Saxena</h1>
+      <div class="hero-role">
+        AI Security Research<br/>
+        University of Illinois Springfield &times; KIIT University
+      </div>
+
+      <p class="hero-bio">
+        I research the security of AI systems, with a focus on LLM agents and
+        data governance in retrieval pipelines. I build things that tend to end
+        up in open-source ML infrastructure.
+      </p>
+
+      <div class="hero-links">
+        <a href="https://github.com/anakintano"                  target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/aditya-saxena-mvs/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://twitter.com/Techie038"                  target="_blank" rel="noopener">Twitter</a>
+        <a href="https://huggingface.co/Akratos"                 target="_blank" rel="noopener">HuggingFace</a>
+        <a href="mailto:madityasaxena@gmail.com">Email</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Nav ── -->
+  <nav>
+    <a class="active" data-page="about">about</a>
+    <a data-page="work">work</a>
+    <a data-page="news">news</a>
+  </nav>
+
+  <!-- ── ABOUT ── -->
+  <section class="page active" id="about">
+    <div class="about-extra">
+      <p>
+        My primary research interest is the security of AI systems — specifically,
+        what happens when language models are trusted to make authorization decisions.
+        LLM-powered agents increasingly act as autonomous intermediaries between users
+        and real-world systems: sending emails, invoking APIs, executing code. Because
+        authorization and reasoning share the same inference context, adversarial inputs
+        can simultaneously manipulate both. I study this structural gap formally and work
+        on decoupled enforcement mechanisms that operate as independent execution
+        boundaries, entirely outside model inference.
+      </p>
+      <p>
+        A second line of work concerns data governance in retrieval-augmented systems.
+        When a data subject requests erasure under GDPR, deleting a document from a
+        vector store is not sufficient — embeddings persist in HNSW indices, and
+        semantically adjacent chunks leak the forgotten entity through cross-references.
+        I built <strong>SURGE</strong>, a framework that implements hard delete,
+        embedding-level soft suppression, and semantic neighbourhood purge, with a
+        four-metric evaluation suite to certify that forgetting actually happened.
+      </p>
+      <p>
+        Before focusing on security, I worked across the AI stack: generative models
+        (Stable Diffusion, ControlNet, text-to-image), audio intelligence (Whisper-based
+        speech coaching), knowledge graph construction from unstructured text, and
+        serverless AI pipelines. That breadth now informs how I think about attack
+        surfaces — most ML systems were not designed with adversarial principals in mind.
+      </p>
+      <p>
+        On the applied side, I spent a summer at Hindalco Industries (Aditya Birla Group)
+        as a manufacturing analytics intern, completing 150+ hours of process analysis
+        and contributing to a 5% efficiency improvement on an extrusion downstream line.
+        I was later recognised with the <em>Role Model — "You Inspire Me"</em> award
+        under the ABG Bhoomika initiative. Earlier, as a Microsoft Learn Student
+        Ambassador, I ran workshops on app development and prompt engineering for
+        180+ developers across campus events.
+      </p>
+      <p>
+        I contribute regularly to open-source ML infrastructure — across model training
+        frameworks, retrieval libraries, and agent tooling — because I believe the
+        security properties of these foundations matter as much as their capabilities.
+      </p>
+    </div>
+
+    <div class="award-block">
+      <strong>Hindalco Role Model — "You Inspire Me"</strong>
+      Recognition under the ABG Bhoomika (ALERT Behavior Initiative),
+      Hindalco Industries Ltd. &nbsp;·&nbsp; Jul 2025
+    </div>
+  </section>
+
+  <!-- ── WORK ── -->
+  <section class="page" id="work">
+
+    <div class="section-label">Open Source Contributions</div>
+
+    <ul class="contrib-list">
+      <li>
+        <span class="contrib-repo">
+          <a href="https://github.com/openai/parameter-golf/pulls" target="_blank" rel="noopener">openai/parameter-golf</a>
+        </span>
+        <span class="contrib-desc">SP8192 — 3-layer recurrence, parallel residuals, QK-gain scaling</span>
+      </li>
+      <li>
+        <span class="contrib-repo">
+          <a href="https://github.com/google-gemini/gemini-cli/pulls" target="_blank" rel="noopener">google-gemini/gemini-cli</a>
+        </span>
+        <span class="contrib-desc">Fix OAuth state-mismatch CSRF error during Google authentication</span>
+      </li>
+      <li>
+        <span class="contrib-repo">
+          <a href="https://github.com/langchain-ai/langchain/pulls" target="_blank" rel="noopener">langchain-ai/langchain</a>
+        </span>
+        <span class="contrib-desc">SafePythonREPL — AST-based sandbox for safe code execution</span>
+      </li>
+      <li>
+        <span class="contrib-repo">
+          <a href="https://github.com/huggingface/transformers/pulls" target="_blank" rel="noopener">huggingface/transformers</a>
+        </span>
+        <span class="contrib-desc">Fix crash in Qwen2.5-VL processor on batched mixed-size inputs</span>
+      </li>
+      <li>
+        <span class="contrib-repo">
+          <a href="https://github.com/PriorLabs/TabPFN/pulls" target="_blank" rel="noopener">PriorLabs/TabPFN</a>
+        </span>
+        <span class="contrib-desc">Add <code>validation_frequency</code> option to fine-tuning loop</span>
+      </li>
+      <li>
+        <span class="contrib-repo">
+          <a href="https://github.com/NVIDIA/NeMo/pulls" target="_blank" rel="noopener">NVIDIA-NeMo/Automodel</a>
+        </span>
+        <span class="contrib-desc">SkyPilot as a cloud execution backend for AutoModel training</span>
+      </li>
+    </ul>
+
+    <div class="section-label">Projects</div>
+
+    <div class="project-item">
+      <div class="project-header">
+        <span class="project-name">SURGE</span>
+        <span class="project-tagline">Selective Unlearning &amp; Retrieval Governance Engine</span>
+      </div>
+      <p class="project-desc">
+        A Python framework for GDPR Article 17 compliance in RAG pipelines. Implements
+        three unlearning strategies — hard delete, soft suppress with embedding poisoning,
+        and semantic neighbourhood purge — with a four-metric evaluation suite and a
+        tamper-evident audit log. Addresses the problem that deleting a document
+        from a vector store is not the same as forgetting it.
+      </p>
+      <div class="tag-row">
+        <span class="tag">python</span>
+        <span class="tag">chromadb</span>
+        <span class="tag">rag</span>
+        <span class="tag">machine-unlearning</span>
+        <span class="tag">gdpr</span>
+        <span class="tag">fastapi</span>
+      </div>
+    </div>
+
+    <div class="project-item">
+      <div class="project-header">
+        <span class="project-name">
+          <a href="https://github.com/anakintano/SpeechPresentationGuid-AI" target="_blank" rel="noopener">
+            AI Speech Reviewer
+          </a>
+        </span>
+        <span class="project-tagline">SpeechPresentationGuid-AI</span>
+      </div>
+      <p class="project-desc">
+        Transcribes speech with Whisper and runs multi-dimensional coaching via Qwen —
+        evaluating pacing, filler words, clarity, and confidence without a human reviewer.
+      </p>
+      <div class="tag-row">
+        <span class="tag">python</span>
+        <span class="tag">whisper</span>
+        <span class="tag">qwen</span>
+        <span class="tag">audio</span>
+        <span class="tag">llm</span>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ── NEWS ── -->
+  <section class="page" id="news">
+    <ul class="news-list">
+
+      <li class="news-item">
+        <span class="news-date">Apr 2026</span>
+        <span class="news-text">
+          PR to <a href="https://github.com/openai/parameter-golf" target="_blank" rel="noopener">openai/parameter-golf</a> —
+          SP8192 model with 3-layer recurrence and parallel residual connections.
+        </span>
+      </li>
+
+      <li class="news-item">
+        <span class="news-date">Mar 2026</span>
+        <span class="news-text">
+          OAuth CSRF fix contributed to
+          <a href="https://github.com/google-gemini/gemini-cli" target="_blank" rel="noopener">google-gemini/gemini-cli</a>.
+        </span>
+      </li>
+
+      <li class="news-item">
+        <span class="news-date">Mar 2026</span>
+        <span class="news-text">
+          AST-based safe execution sandbox submitted to
+          <a href="https://github.com/langchain-ai/langchain" target="_blank" rel="noopener">langchain-ai/langchain</a>.
+        </span>
+      </li>
+
+      <li class="news-item">
+        <span class="news-date">Mar 2026</span>
+        <span class="news-text">
+          Batched input fix for Qwen2.5-VL processor submitted to
+          <a href="https://github.com/huggingface/transformers" target="_blank" rel="noopener">huggingface/transformers</a>.
+        </span>
+      </li>
+
+      <li class="news-item">
+        <span class="news-date">Jul 2025</span>
+        <span class="news-text">
+          Received <em>Hindalco Role Model — "You Inspire Me"</em> recognition under the
+          ABG Bhoomika (ALERT Behavior Initiative), Hindalco Industries Ltd.
+        </span>
+      </li>
+
+    </ul>
+  </section>
+
+  <script>
+    /* ── Nav ── */
+    const navLinks = document.querySelectorAll('nav a');
+    const pages    = document.querySelectorAll('.page');
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const t = link.dataset.page;
+        navLinks.forEach(l => l.classList.remove('active'));
+        pages.forEach(p   => p.classList.remove('active'));
+        link.classList.add('active');
+        document.getElementById(t).classList.add('active');
+      });
+    });
+
+    /* ── Theme toggle ── */
+    const btn  = document.getElementById('themeBtn');
+    const root = document.documentElement;
+    let   light = false;
+
+    btn.addEventListener('click', () => {
+      light = !light;
+      root.classList.toggle('light', light);
+      btn.textContent = light ? '☽' : '☀︎';
+    });
+  </script>
+
+</body>
+</html>
