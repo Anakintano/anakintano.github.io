@@ -1,0 +1,218 @@
+@import "tailwindcss";
+
+/* ── Design tokens ─────────────────────────────────────────────── */
+:root {
+  --bg-base:    #050508;
+  --bg-surface: #0d0d1a;
+  --bg-card:    rgba(17, 17, 40, 0.85);
+  --primary:    #7c3aed;
+  --primary-glow: rgba(124, 58, 237, 0.35);
+  --secondary:  #06b6d4;
+  --secondary-glow: rgba(6, 182, 212, 0.3);
+  --accent:     #10b981;
+  --accent-glow: rgba(16, 185, 129, 0.3);
+  --text:       #e2e8f0;
+  --muted:      #64748b;
+  --border:     rgba(124, 58, 237, 0.2);
+  --border-hover: rgba(124, 58, 237, 0.6);
+}
+
+@theme inline {
+  --color-background: var(--bg-base);
+  --color-foreground: var(--text);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-surface: var(--bg-surface);
+  --color-card: var(--bg-card);
+  --color-muted: var(--muted);
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+}
+
+/* ── Base reset ─────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  background: var(--bg-base);
+}
+
+body {
+  background: var(--bg-base);
+  color: var(--text);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* scanline texture overlay */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── Animated gradient mesh bg ──────────────────────────────────── */
+.gradient-mesh {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 20%, rgba(124, 58, 237, 0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 70%, rgba(6, 182, 212, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(16, 185, 129, 0.06) 0%, transparent 70%);
+  animation: meshShift 12s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes meshShift {
+  0%   { background-position: 0% 0%, 100% 100%, 50% 50%; }
+  100% { background-position: 30% 20%, 70% 80%, 60% 40%; }
+}
+
+/* ── Glitch effect ──────────────────────────────────────────────── */
+.glitch {
+  position: relative;
+  display: inline-block;
+}
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.glitch::before {
+  color: var(--secondary);
+  animation: glitch-clip-1 3.5s infinite linear;
+  clip-path: polygon(0 20%, 100% 20%, 100% 35%, 0 35%);
+  transform: translateX(-2px);
+  opacity: 0.7;
+}
+.glitch::after {
+  color: var(--primary);
+  animation: glitch-clip-2 3.5s infinite linear;
+  clip-path: polygon(0 65%, 100% 65%, 100% 80%, 0 80%);
+  transform: translateX(2px);
+  opacity: 0.7;
+}
+@keyframes glitch-clip-1 {
+  0%, 90%, 100% { transform: translateX(0); opacity: 0; }
+  92%           { transform: translateX(-3px); opacity: 0.7; }
+  94%           { transform: translateX(3px); opacity: 0.7; }
+  96%           { transform: translateX(-1px); opacity: 0.7; }
+}
+@keyframes glitch-clip-2 {
+  0%, 92%, 100% { transform: translateX(0); opacity: 0; }
+  94%           { transform: translateX(3px); opacity: 0.7; }
+  96%           { transform: translateX(-2px); opacity: 0.7; }
+  98%           { transform: translateX(1px); opacity: 0.7; }
+}
+
+/* ── Neon card ──────────────────────────────────────────────────── */
+.neon-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+  transition: border-color 0.25s, box-shadow 0.25s, transform 0.2s;
+}
+.neon-card:hover {
+  border-color: var(--border-hover);
+  box-shadow: 0 0 24px var(--primary-glow), inset 0 0 12px rgba(124,58,237,0.04);
+  transform: translateY(-2px);
+}
+
+/* ── Neon button ────────────────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.5rem;
+  background: linear-gradient(135deg, var(--primary), #9333ea);
+  color: #fff;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  letter-spacing: 0.02em;
+  transition: box-shadow 0.2s, transform 0.2s;
+  text-decoration: none;
+}
+.btn-primary:hover {
+  box-shadow: 0 0 20px var(--primary-glow), 0 4px 16px rgba(0,0,0,0.4);
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.5rem;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  letter-spacing: 0.02em;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  text-decoration: none;
+}
+.btn-ghost:hover {
+  border-color: var(--secondary);
+  box-shadow: 0 0 16px var(--secondary-glow);
+  transform: translateY(-1px);
+}
+
+/* ── Tag / chip ─────────────────────────────────────────────────── */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  font-family: var(--font-mono);
+}
+.tag-purple { background: rgba(124,58,237,0.15); color: #a78bfa; border: 1px solid rgba(124,58,237,0.3); }
+.tag-cyan   { background: rgba(6,182,212,0.12);  color: #67e8f9; border: 1px solid rgba(6,182,212,0.3); }
+.tag-green  { background: rgba(16,185,129,0.12); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
+.tag-red    { background: rgba(239,68,68,0.12);  color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
+
+/* ── Section divider ────────────────────────────────────────────── */
+.section-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--primary) 40%, var(--secondary) 60%, transparent);
+  opacity: 0.25;
+  margin: 0 auto;
+}
+
+/* ── Mono label ─────────────────────────────────────────────────── */
+.mono-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--secondary);
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
+
+/* ── Selection ──────────────────────────────────────────────────── */
+::selection { background: rgba(124,58,237,0.4); color: #fff; }
