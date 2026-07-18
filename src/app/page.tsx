@@ -1,304 +1,354 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { motion, type Transition } from "framer-motion";
-
-// ── Shared motion config ────────────────────────────────────────────────────
-
-const fadeUpTransition: Transition = { duration: 0.6, ease: "easeOut" };
-
-const fadeUp = {
-  initial: { opacity: 0, y: 22 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-80px" },
-  transition: fadeUpTransition,
-};
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import AnimeHero from "@/components/AnimeHero";
 
 // ── Data ─────────────────────────────────────────────────────────────────────
 
 const PROJECTS = [
   {
+    index: "01",
     title: "PhishAI",
-    subtitle: "Phishing Detection System",
-    period: "University project · Team lead",
+    subtitle: "Routed specialist-model phishing detection",
     description:
-      "End-to-end ML pipeline for a routed, specialist-model phishing detector — DistilBERT fine-tuning, automated data pipelines, ablation studies, and W&B experiment tracking, benchmarked against classical baselines.",
-    metrics: ["0.9707 F1 — email", "0.9248 F1 — URL", "Perfect modality routing"],
-    stack: ["Python", "DistilBERT", "FastAPI", "Weights & Biases"],
+      "End-to-end ML pipeline — DistilBERT fine-tuning, automated data pipelines, ablation studies, W&B tracking. 0.9707 F1 on email, 0.9248 on URL, perfect modality routing.",
+    stack: "Python · DistilBERT · FastAPI · W&B",
     href: "https://github.com/Anakintano/aditya-Phishing-email-detection",
   },
   {
+    index: "02",
     title: "RepLift",
-    subtitle: "Offline-First Nutrition Tracker",
-    period: "Personal project",
+    subtitle: "Offline-first nutrition tracker",
     description:
-      "Offline-first nutrition tracker with resilient IndexedDB sync — optimistic updates, idempotency keys, exponential backoff, and conflict resolution — plus an AI-assisted natural-language food logger with structured-output validation and a manual fallback.",
-    metrics: ["54 passing frontend unit tests"],
-    stack: ["Next.js", "TypeScript", "FastAPI", "PostgreSQL", "Redis", "Dexie"],
+      "Resilient IndexedDB sync — optimistic updates, idempotency keys, exponential backoff, conflict resolution — plus an AI-assisted natural-language food logger. 54 passing frontend unit tests.",
+    stack: "Next.js · TypeScript · FastAPI · PostgreSQL · Redis",
     href: "https://github.com/Anakintano/RepLift",
   },
 ];
 
-const EXPERIENCE = [
-  {
-    role: "Software Development Intern — AI & Analytics",
-    org: "Aditya Birla Group · Hindalco Industries Ltd.",
-    period: "May 2025 — Jul 2025",
-    location: "Renukoot, UP",
-    description:
-      "Built a production-ready AI & analytics platform for an aluminium extrusion plant — an explainable anomaly detection engine over 36,000+ manufacturing records under Six Sigma methods, and a full-stack time-series workflow system on FastAPI and SQLite for operational decision support.",
-    note: "Recognized as a Hindalco Role Model for the internship's impact.",
-  },
-];
+const MARQUEE_ITEMS =
+  "Python · TypeScript · FastAPI · Next.js · PostgreSQL · Redis · Transformers · scikit-learn · Hugging Face · Pandas · ";
 
 // ── Page ────────────────────────────────────────────────────────────────────
 
 export default function HomePage() {
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const ctx = gsap.context(() => {
+      if (reduced) {
+        gsap.set("[data-reveal], [data-hero-line]", { opacity: 1, y: 0 });
+        return;
+      }
+
+      // hero headline — staggered line rise
+      const heroTween = gsap.fromTo(
+        "[data-hero-line]",
+        { yPercent: 110, opacity: 0 },
+        {
+          yPercent: 0,
+          opacity: 1,
+          duration: 1.1,
+          ease: "power4.out",
+          stagger: 0.12,
+          delay: 0.25,
+        }
+      );
+
+      // resilience: if the rAF ticker is throttled (embedded views,
+      // battery-saver modes), never leave the page blank — snap to final state
+      const guard = window.setTimeout(() => {
+        if (heroTween.progress() === 0) {
+          gsap.set("[data-hero-line], [data-hero-sub], [data-reveal]", {
+            clearProps: "all",
+          });
+        }
+      }, 1800);
+      const clearGuard = () => window.clearTimeout(guard);
+      heroTween.eventCallback("onStart", clearGuard);
+      gsap.fromTo(
+        "[data-hero-sub]",
+        { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 0.9, ease: "power2.out", delay: 0.95 }
+      );
+
+      // hero content drifts up and fades as you scroll past it
+      gsap.to("[data-hero-content]", {
+        yPercent: -18,
+        opacity: 0,
+        ease: "none",
+        scrollTrigger: {
+          trigger: "[data-hero]",
+          start: "top top",
+          end: "bottom 35%",
+          scrub: true,
+        },
+      });
+
+      // generic section reveals
+      gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((el) => {
+        gsap.fromTo(
+          el,
+          { opacity: 0, y: 36 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.9,
+            ease: "power3.out",
+            scrollTrigger: { trigger: el, start: "top 85%", once: true },
+          }
+        );
+      });
+    }, rootRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <>
-      {/* ─── Hero ────────────────────────────────────────────────────── */}
+    <div ref={rootRef}>
+      {/* ─── Hero — anime dusk, editorial serif ─────────────────────── */}
       <section
+        data-hero
         style={{
           position: "relative",
-          minHeight: "92svh",
+          minHeight: "100svh",
           display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          padding: "6rem 1.5rem 4rem",
+          alignItems: "flex-end",
+          overflow: "hidden",
+          // CSS fallback sky if WebGL is unavailable
+          background: "linear-gradient(to top, #f0a875 0%, #d97f6f 30%, #8a6a9e 65%, #3a3560 100%)",
         }}
       >
-        <motion.div
-          initial={{ opacity: 0, y: 28 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          style={{ maxWidth: "720px", margin: "0 auto", width: "100%" }}
+        <AnimeHero />
+
+        {/* legibility gradient */}
+        <div
+          aria-hidden
+          style={{
+            position: "absolute",
+            inset: 0,
+            background:
+              "linear-gradient(to top, rgba(20,15,28,0.55) 0%, rgba(20,15,28,0.08) 35%, transparent 60%)",
+            pointerEvents: "none",
+          }}
+        />
+
+        <div
+          data-hero-content
+          style={{
+            position: "relative",
+            zIndex: 1,
+            width: "100%",
+            maxWidth: "64rem",
+            margin: "0 auto",
+            padding: "0 1.25rem 5.5rem",
+          }}
         >
-          <p className="mono-label" style={{ marginBottom: "1.6rem" }}>
-            Pune, India — Computer Science, KIIT
+          <p
+            data-hero-sub
+            className="mono-label"
+            style={{ color: "rgba(255,255,255,0.85)", marginBottom: "1.6rem" }}
+          >
+            Aditya Saxena — Software Engineer · Pune, India
           </p>
 
           <h1
+            className="display"
             style={{
-              fontFamily: "var(--font-serif)",
-              fontStyle: "italic",
-              fontSize: "clamp(3rem, 9vw, 6rem)",
-              fontWeight: 400,
+              fontSize: "clamp(3.2rem, 11vw, 8.5rem)",
               color: "#fff",
-              lineHeight: 1.02,
-              letterSpacing: "-0.01em",
-              marginBottom: "1.8rem",
+              textShadow: "0 2px 40px rgba(20,15,28,0.35)",
+              marginBottom: "2.4rem",
             }}
           >
-            Aditya Saxena
+            <span style={{ display: "block", overflow: "hidden" }}>
+              <span data-hero-line style={{ display: "block" }}>The craft</span>
+            </span>
+            <span style={{ display: "block", overflow: "hidden" }}>
+              <span data-hero-line style={{ display: "block" }}>
+                <em>is the point.</em>
+              </span>
+            </span>
           </h1>
 
-          <p
-            style={{
-              fontSize: "clamp(1.05rem, 2.2vw, 1.25rem)",
-              color: "var(--muted)",
-              lineHeight: 1.6,
-              maxWidth: "540px",
-              marginBottom: "2.75rem",
-            }}
-          >
-            Software engineer building full-stack and ML systems. Currently
-            finishing my degree, most recently interning on the AI &amp;
-            analytics team at Hindalco Industries.
-          </p>
-
-          <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-            <a href="#work" className="btn-primary">
+          <div data-hero-sub style={{ display: "flex", gap: "0.9rem", flexWrap: "wrap" }}>
+            <a href="#work" className="btn-paper">
               Selected work
             </a>
-            <a href="/resume.pdf" target="_blank" rel="noopener noreferrer" className="btn-ghost">
-              Résumé
-            </a>
+            <Link href="/blog" className="btn-ghost-light">
+              Read the blog
+            </Link>
           </div>
-        </motion.div>
+        </div>
       </section>
 
-      {/* ─── Selected Work ───────────────────────────────────────────── */}
-      <section id="work" style={{ maxWidth: "720px", margin: "0 auto", padding: "5rem 1.5rem" }}>
-        <motion.div {...fadeUp} style={{ marginBottom: "3rem" }}>
-          <span className="mono-label">Selected work</span>
-          <div className="section-divider" style={{ marginTop: "0.9rem" }} />
-        </motion.div>
+      {/* ─── Marquee ─────────────────────────────────────────────────── */}
+      <div className="marquee py-4" aria-hidden>
+        <div className="marquee-track mono-label" style={{ color: "var(--ink-soft)" }}>
+          {MARQUEE_ITEMS.repeat(3)}
+          {MARQUEE_ITEMS.repeat(3)}
+        </div>
+      </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-          {PROJECTS.map((p, i) => (
-            <motion.a
+      {/* ─── Intro statement ─────────────────────────────────────────── */}
+      <section className="max-w-4xl mx-auto px-5 sm:px-8 py-28">
+        <p
+          data-reveal
+          style={{
+            fontFamily: "var(--font-serif)",
+            fontSize: "clamp(1.6rem, 4vw, 2.6rem)",
+            lineHeight: 1.3,
+            maxWidth: "46rem",
+          }}
+        >
+          Final-year CS student who likes building things end to end — from the
+          data pipeline to the interface someone actually uses.{" "}
+          <em style={{ color: "var(--terracotta)" }}>
+            Most recently: the AI &amp; analytics intern at Hindalco Industries.
+          </em>
+        </p>
+      </section>
+
+      {/* ─── Selected work ───────────────────────────────────────────── */}
+      <section id="work" className="max-w-4xl mx-auto px-5 sm:px-8 pb-24">
+        <div data-reveal className="flex items-baseline justify-between mb-10">
+          <h2 className="display" style={{ fontSize: "clamp(2.2rem, 6vw, 3.8rem)" }}>
+            Selected <em>work</em>
+          </h2>
+          <span className="mono-label" style={{ color: "var(--ink-soft)" }}>
+            2024 — 2026
+          </span>
+        </div>
+
+        <div data-reveal>
+          {PROJECTS.map((p) => (
+            <a
               key={p.title}
               href={p.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="quiet-card"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.5, delay: i * 0.08, ease: "easeOut" }}
-              style={{
-                display: "block",
-                padding: "2rem",
-                textDecoration: "none",
-                color: "inherit",
-              }}
+              className="work-row"
             >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "baseline",
-                  flexWrap: "wrap",
-                  gap: "0.5rem",
-                  marginBottom: "0.4rem",
-                }}
-              >
+              <div className="flex items-baseline gap-5 flex-wrap">
+                <span className="mono-label" style={{ color: "var(--ink-soft)" }}>
+                  {p.index}
+                </span>
                 <h3
+                  className="work-title"
                   style={{
-                    fontFamily: "var(--font-space, var(--font-sans))",
-                    fontSize: "1.35rem",
-                    fontWeight: 600,
-                    color: "#fff",
+                    fontFamily: "var(--font-serif)",
+                    fontSize: "clamp(1.8rem, 5vw, 3rem)",
+                    transition: "color 0.25s",
                   }}
                 >
                   {p.title}
                 </h3>
                 <span
-                  style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: "0.72rem",
-                    color: "var(--muted)",
-                  }}
+                  className="mono-label hidden sm:inline"
+                  style={{ color: "var(--ink-soft)", marginLeft: "auto" }}
                 >
-                  {p.period}
+                  {p.subtitle}
                 </span>
               </div>
-
-              <p style={{ color: "var(--muted)", fontSize: "0.9rem", marginBottom: "1rem" }}>
-                {p.subtitle}
-              </p>
-
-              <p style={{ color: "var(--text)", fontSize: "0.95rem", lineHeight: 1.65, marginBottom: "1.25rem" }}>
+              <p
+                style={{
+                  color: "var(--ink-soft)",
+                  maxWidth: "620px",
+                  lineHeight: 1.7,
+                  marginTop: "0.9rem",
+                  fontSize: "0.95rem",
+                }}
+              >
                 {p.description}
               </p>
-
-              {p.metrics.length > 0 && (
-                <p
-                  style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: "0.72rem",
-                    color: "var(--text)",
-                    opacity: 0.85,
-                    marginBottom: "1.1rem",
-                  }}
-                >
-                  {p.metrics.join("  ·  ")}
-                </p>
-              )}
-
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-                {p.stack.map((s) => (
-                  <span key={s} className="pill">
-                    {s}
-                  </span>
-                ))}
-              </div>
-            </motion.a>
+              <p className="mono-label" style={{ color: "var(--ink-soft)", marginTop: "1rem", opacity: 0.75 }}>
+                {p.stack}
+              </p>
+            </a>
           ))}
         </div>
       </section>
 
       {/* ─── Experience ──────────────────────────────────────────────── */}
-      <section id="experience" style={{ maxWidth: "720px", margin: "0 auto", padding: "3rem 1.5rem 5rem" }}>
-        <motion.div {...fadeUp} style={{ marginBottom: "3rem" }}>
-          <span className="mono-label">Experience</span>
-          <div className="section-divider" style={{ marginTop: "0.9rem" }} />
-        </motion.div>
+      <section
+        id="experience"
+        style={{ background: "var(--paper-deep)", borderTop: "1px solid var(--line)" }}
+      >
+        <div className="max-w-4xl mx-auto px-5 sm:px-8 py-24">
+          <div data-reveal className="mb-10">
+            <h2 className="display" style={{ fontSize: "clamp(2.2rem, 6vw, 3.8rem)" }}>
+              Experience
+            </h2>
+          </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-          {EXPERIENCE.map((e, i) => (
-            <motion.div
-              key={e.role}
-              className="quiet-card"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.5, delay: i * 0.08, ease: "easeOut" }}
-              style={{ padding: "2rem" }}
+          <div data-reveal>
+            <div className="flex items-baseline justify-between gap-4 flex-wrap">
+              <h3 style={{ fontFamily: "var(--font-serif)", fontSize: "clamp(1.4rem, 3.5vw, 2rem)" }}>
+                Software Development Intern — AI &amp; Analytics
+              </h3>
+              <span className="mono-label" style={{ color: "var(--ink-soft)" }}>
+                May — Jul 2025
+              </span>
+            </div>
+            <p className="mono-label" style={{ color: "var(--terracotta)", margin: "0.5rem 0 1.2rem" }}>
+              Aditya Birla Group · Hindalco Industries · Renukoot, UP
+            </p>
+            <p style={{ color: "var(--ink)", maxWidth: "640px", lineHeight: 1.75 }}>
+              Built a production-ready AI &amp; analytics platform for an
+              aluminium extrusion plant — an explainable anomaly detection
+              engine over 36,000+ manufacturing records under Six Sigma
+              methods, and a full-stack time-series workflow system on FastAPI
+              and SQLite for operational decision support.
+            </p>
+            <p
+              style={{
+                fontFamily: "var(--font-serif)",
+                fontStyle: "italic",
+                color: "var(--ink-soft)",
+                marginTop: "1.2rem",
+              }}
             >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "baseline",
-                  flexWrap: "wrap",
-                  gap: "0.5rem",
-                  marginBottom: "0.3rem",
-                }}
-              >
-                <h3 style={{ fontSize: "1.1rem", fontWeight: 600, color: "#fff" }}>{e.role}</h3>
-                <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.72rem", color: "var(--muted)" }}>
-                  {e.period}
-                </span>
-              </div>
-              <p style={{ color: "var(--muted)", fontSize: "0.88rem", marginBottom: "1rem" }}>
-                {e.org} · {e.location}
-              </p>
-              <p style={{ color: "var(--text)", fontSize: "0.95rem", lineHeight: 1.65, marginBottom: e.note ? "1rem" : 0 }}>
-                {e.description}
-              </p>
-              {e.note && (
-                <p style={{ color: "var(--muted)", fontSize: "0.85rem", fontStyle: "italic" }}>{e.note}</p>
-              )}
-            </motion.div>
-          ))}
+              Recognized as a Hindalco Role Model for the internship&apos;s impact.
+            </p>
+          </div>
         </div>
       </section>
 
       {/* ─── About ───────────────────────────────────────────────────── */}
-      <section id="about" style={{ maxWidth: "720px", margin: "0 auto", padding: "3rem 1.5rem 6rem" }}>
-        <motion.div {...fadeUp} style={{ marginBottom: "2.5rem" }}>
-          <span className="mono-label">About</span>
-          <div className="section-divider" style={{ marginTop: "0.9rem" }} />
-        </motion.div>
-
-        <motion.div {...fadeUp}>
-          <p style={{ color: "var(--text)", fontSize: "1.05rem", lineHeight: 1.75, marginBottom: "1.25rem" }}>
-            I&apos;m a final-year Computer Science student at KIIT, based in Pune.
-            I like building things end to end — from a data pipeline to the
-            interface someone actually uses — and I&apos;m most interested in
-            the parts of software that touch real operational decisions:
-            manufacturing anomaly detection, sync and offline reliability,
-            model behavior under real constraints.
+      <section id="about" className="max-w-4xl mx-auto px-5 sm:px-8 py-28">
+        <div data-reveal className="mb-10">
+          <h2 className="display" style={{ fontSize: "clamp(2.2rem, 6vw, 3.8rem)" }}>
+            About
+          </h2>
+        </div>
+        <div data-reveal style={{ maxWidth: "640px" }}>
+          <p style={{ lineHeight: 1.8, marginBottom: "1.2rem" }}>
+            I&apos;m a final-year Computer Science student at KIIT, based in
+            Pune. I care about the parts of software that touch real
+            operational decisions — manufacturing anomaly detection, sync and
+            offline reliability, model behavior under real constraints.
           </p>
-          <p style={{ color: "var(--text)", fontSize: "1.05rem", lineHeight: 1.75, marginBottom: "1.25rem" }}>
-            Outside coursework and projects, I&apos;m also collaborating on a
-            couple of research papers on LLM agent security and evaluation
-            with faculty in the US — still under review, more to share once
-            they&apos;re out.
+          <p style={{ lineHeight: 1.8, marginBottom: "1.8rem" }}>
+            Outside coursework, I&apos;m collaborating on a couple of research
+            papers on LLM agent security and evaluation with faculty in the US
+            — still under review, more to share once they&apos;re out. I write
+            about what I&apos;m learning on{" "}
+            <Link href="/blog" style={{ color: "var(--terracotta)", textUnderlineOffset: "3px" }}>
+              the blog
+            </Link>
+            .
           </p>
-          <p style={{ color: "var(--muted)", fontSize: "0.92rem", lineHeight: 1.7 }}>
-            Python, TypeScript, FastAPI, Next.js, PostgreSQL, Redis, Pandas,
-            scikit-learn, Hugging Face.
-          </p>
-        </motion.div>
-
-        <motion.div {...fadeUp} style={{ marginTop: "2.5rem" }}>
-          <Link
-            href="/resume.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: "0.8rem",
-              color: "var(--muted)",
-              textDecoration: "none",
-            }}
-          >
-            View full résumé →
-          </Link>
-        </motion.div>
+          <a href="/resume.pdf" target="_blank" rel="noopener noreferrer" className="btn-line">
+            Full résumé
+          </a>
+        </div>
       </section>
-    </>
+    </div>
   );
 }

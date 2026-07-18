@@ -1,15 +1,8 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, JetBrains_Mono, Inter, Instrument_Serif } from "next/font/google";
+import { JetBrains_Mono, Inter, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import ShaderBackground from "@/components/ShaderBackground";
-
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-mono",
@@ -54,12 +47,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} ${inter.variable} ${instrumentSerif.variable} h-full antialiased`}
+      className={`${jetbrainsMono.variable} ${inter.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
-      <body id="top" className="min-h-full flex flex-col text-[var(--text)]">
-        <ShaderBackground />
+      <body id="top" className="min-h-full flex flex-col">
         <Nav />
-        <main className="flex-1 relative z-[1]">{children}</main>
+        <main className="flex-1">{children}</main>
         <Footer />
       </body>
     </html>

@@ -4,20 +4,25 @@ export default function Footer() {
   return (
     <footer
       id="contact"
-      className="w-full py-16 px-6"
-      style={{ borderTop: "1px solid var(--border)" }}
+      style={{ background: "var(--dusk)", color: "var(--paper)" }}
     >
-      <div className="max-w-3xl mx-auto flex flex-col items-center text-center gap-6">
-        <p
+      <div className="max-w-5xl mx-auto px-5 sm:px-8 py-20 flex flex-col items-center text-center gap-8">
+        <p className="mono-label" style={{ color: "rgba(246,241,231,0.55)" }}>
+          Get in touch
+        </p>
+        <a
+          href="mailto:madityasaxena@gmail.com"
+          className="display"
           style={{
-            fontFamily: "var(--font-serif)",
-            fontSize: "clamp(1.6rem, 4vw, 2.4rem)",
-            color: "var(--text)",
+            fontSize: "clamp(1.9rem, 6vw, 4rem)",
+            color: "var(--paper)",
+            textDecoration: "none",
           }}
         >
-          Let&apos;s talk.
-        </p>
-        <div className="flex items-center gap-6 flex-wrap justify-center">
+          Let&apos;s <em>talk.</em>
+        </a>
+
+        <div className="flex items-center gap-8 flex-wrap justify-center mt-2">
           {[
             { href: "mailto:madityasaxena@gmail.com", label: "Email" },
             { href: "https://github.com/Anakintano", label: "GitHub" },
@@ -28,11 +33,9 @@ export default function Footer() {
               href={href}
               target={href.startsWith("http") ? "_blank" : undefined}
               rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
-              className="transition-colors duration-200 hover:!text-[var(--text)]"
+              className="mono-label"
               style={{
-                fontFamily: "var(--font-mono)",
-                fontSize: "0.8rem",
-                color: "var(--muted)",
+                color: "rgba(246,241,231,0.65)",
                 textDecoration: "none",
               }}
             >
@@ -40,15 +43,10 @@ export default function Footer() {
             </Link>
           ))}
         </div>
+
         <span
-          style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: "0.7rem",
-            letterSpacing: "0.04em",
-            color: "var(--muted)",
-            opacity: 0.6,
-            marginTop: "1.5rem",
-          }}
+          className="mono-label"
+          style={{ color: "rgba(246,241,231,0.35)", marginTop: "2rem" }}
         >
           © 2026 Aditya Saxena · Pune, India
         </span>
