@@ -73,7 +73,7 @@ export default function ResearchPage() {
   return (
     <div
       className="relative min-h-screen"
-      style={{ background: "var(--bg-base)" }}
+      style={{ background: "transparent" }}
     >
       {/* Ambient background */}
       <div className="gradient-mesh" aria-hidden="true" />

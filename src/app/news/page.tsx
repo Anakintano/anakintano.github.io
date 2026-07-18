@@ -231,7 +231,7 @@ export default async function NewsPage() {
   const news = await fetchNews();
 
   return (
-    <main className="min-h-screen" style={{ background: "var(--bg-base)" }}>
+    <main className="min-h-screen" style={{ background: "transparent" }}>
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
 
         {/* ── Header ─────────────────────────────────────────────────── */}

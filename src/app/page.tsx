@@ -197,7 +197,7 @@ export default function HomePage() {
             left: 0,
             right: 0,
             height: "200px",
-            background: "linear-gradient(to bottom, transparent, var(--bg-base))",
+            background: "linear-gradient(to bottom, transparent, rgba(5,5,8,0.75))",
             pointerEvents: "none",
           }}
         />
@@ -207,7 +207,8 @@ export default function HomePage() {
       <motion.section
         {...fadeUp}
         style={{
-          background: "var(--bg-surface)",
+          background: "rgba(13, 13, 26, 0.62)",
+          backdropFilter: "blur(10px)",
           borderTop: "1px solid var(--border)",
           borderBottom: "1px solid var(--border)",
           padding: "2.75rem 1.5rem",

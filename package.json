@@ -11,17 +11,20 @@
     "@notionhq/client": "^5.19.0",
     "clsx": "^2.1.1",
     "framer-motion": "^12.38.0",
+    "gsap": "^3.15.0",
     "next": "16.2.4",
     "react": "19.2.4",
     "react-activity-calendar": "^3.2.0",
     "react-dom": "19.2.4",
-    "tailwind-merge": "^3.5.0"
+    "tailwind-merge": "^3.5.0",
+    "three": "^0.185.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "^0.185.1",
     "sharp": "^0.34.5",
     "tailwindcss": "^4",
     "typescript": "^5"

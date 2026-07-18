@@ -3,6 +3,7 @@ import { Space_Grotesk, JetBrains_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import ShaderBackground from "@/components/ShaderBackground";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space",
@@ -47,9 +48,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="en"
       className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[var(--bg-base)] text-[var(--text)]">
+      <body className="min-h-full flex flex-col text-[var(--text)]">
+        <ShaderBackground />
         <Nav />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 relative z-[1]">{children}</main>
         <Footer />
       </body>
     </html>

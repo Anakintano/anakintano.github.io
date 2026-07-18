@@ -39,7 +39,8 @@ html {
 }
 
 body {
-  background: var(--bg-base);
+  /* no body background — the fixed WebGL canvas (z-index:-1) paints between
+     the html background and the content; html keeps the solid fallback */
   color: var(--text);
   font-family: var(--font-sans);
   min-height: 100vh;

@@ -107,7 +107,7 @@ export default async function ProjectsPage() {
   const repos = await fetchRepos();
 
   return (
-    <main className="relative min-h-screen" style={{ background: "var(--bg-base)" }}>
+    <main className="relative min-h-screen" style={{ background: "transparent" }}>
       {/* Ambient gradient */}
       <div className="gradient-mesh" style={{ zIndex: 0 }} />
 
