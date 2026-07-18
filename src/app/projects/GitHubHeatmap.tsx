@@ -105,7 +105,7 @@ export default function GitHubHeatmap() {
           data={ACTIVITY_DATA}
           colorScheme="dark"
           theme={{
-            dark: ["#0d0d1a", "#3b1f6e", "#5c2fad", "#7c3aed", "#a78bfa"],
+            dark: ["#101010", "#2a2a2e", "#4b4b52", "#8a8a92", "#e4e4e7"],
           }}
           blockSize={13}
           blockMargin={4}

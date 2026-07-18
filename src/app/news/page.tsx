@@ -110,7 +110,7 @@ function SetupInstructions() {
     <div
       className="neon-card p-5 md:p-6 opacity-60"
       style={{
-        border: "1px dashed rgba(124,58,237,0.25)",
+        border: "1px dashed rgba(255,255,255,0.25)",
         background: "rgba(17,17,40,0.5)",
       }}
     >
@@ -202,7 +202,7 @@ function SetupInstructions() {
               style={{
                 background: "rgba(0,0,0,0.3)",
                 color: "var(--accent)",
-                border: "1px solid rgba(16,185,129,0.15)",
+                border: "1px solid rgba(212,212,216,0.15)",
               }}
             >
               NOTION_TOKEN=secret_xxx

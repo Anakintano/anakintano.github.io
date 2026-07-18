@@ -14,7 +14,7 @@ import {
   BufferGeometry,
   Float32BufferAttribute,
   AdditiveBlending,
-  IcosahedronGeometry,
+  TetrahedronGeometry,
   LineSegments,
   EdgesGeometry,
   LineBasicMaterial,
@@ -24,7 +24,8 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// GLSL — 3D simplex noise (Ashima / Stefan Gustavson, MIT) + domain-warped fbm
+// GLSL — monochrome technical backdrop: a curved wall of tiles, faint noise
+// illumination, engraved cross markers. Inspired by brutalist studio sites.
 // ─────────────────────────────────────────────────────────────────────────────
 
 const FRAGMENT_SHADER = /* glsl */ `
@@ -38,114 +39,85 @@ uniform float uMotion;     // 1 = animated, 0 = static (reduced motion)
 
 varying vec2 vUv;
 
-// ── simplex 3D noise ──
-vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-vec4 permute(vec4 x) { return mod289(((x * 34.0) + 10.0) * x); }
-vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
-
-float snoise(vec3 v) {
-  const vec2 C = vec2(1.0 / 6.0, 1.0 / 3.0);
-  const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
-
-  vec3 i  = floor(v + dot(v, C.yyy));
-  vec3 x0 = v - i + dot(i, C.xxx);
-
-  vec3 g  = step(x0.yzx, x0.xyz);
-  vec3 l  = 1.0 - g;
-  vec3 i1 = min(g.xyz, l.zxy);
-  vec3 i2 = max(g.xyz, l.zxy);
-
-  vec3 x1 = x0 - i1 + C.xxx;
-  vec3 x2 = x0 - i2 + C.yyy;
-  vec3 x3 = x0 - D.yyy;
-
-  i = mod289(i);
-  vec4 p = permute(permute(permute(
-            i.z + vec4(0.0, i1.z, i2.z, 1.0))
-          + i.y + vec4(0.0, i1.y, i2.y, 1.0))
-          + i.x + vec4(0.0, i1.x, i2.x, 1.0));
-
-  float n_ = 0.142857142857;
-  vec3 ns = n_ * D.wyz - D.xzx;
-
-  vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
-
-  vec4 x_ = floor(j * ns.z);
-  vec4 y_ = floor(j - 7.0 * x_);
-
-  vec4 x = x_ * ns.x + ns.yyyy;
-  vec4 y = y_ * ns.x + ns.yyyy;
-  vec4 h = 1.0 - abs(x) - abs(y);
-
-  vec4 b0 = vec4(x.xy, y.xy);
-  vec4 b1 = vec4(x.zw, y.zw);
-
-  vec4 s0 = floor(b0) * 2.0 + 1.0;
-  vec4 s1 = floor(b1) * 2.0 + 1.0;
-  vec4 sh = -step(h, vec4(0.0));
-
-  vec4 a0 = b0.xzyw + s0.xzyw * sh.xxyy;
-  vec4 a1 = b1.xzyw + s1.xzyw * sh.zzww;
-
-  vec3 p0 = vec3(a0.xy, h.x);
-  vec3 p1 = vec3(a0.zw, h.y);
-  vec3 p2 = vec3(a1.xy, h.z);
-  vec3 p3 = vec3(a1.zw, h.w);
-
-  vec4 norm = taylorInvSqrt(vec4(dot(p0, p0), dot(p1, p1), dot(p2, p2), dot(p3, p3)));
-  p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
-
-  vec4 m = max(0.5 - vec4(dot(x0, x0), dot(x1, x1), dot(x2, x2), dot(x3, x3)), 0.0);
-  m = m * m;
-  return 105.0 * dot(m * m, vec4(dot(p0, x0), dot(p1, x1), dot(p2, x2), dot(p3, x3)));
+float hash21(vec2 p) {
+  p = fract(p * vec2(234.34, 435.345));
+  p += dot(p, p + 34.23);
+  return fract(p.x * p.y);
 }
 
-float fbm(vec3 p) {
-  float sum = 0.0;
-  float amp = 0.5;
-  for (int i = 0; i < 4; i++) {
-    sum += amp * snoise(p);
-    p   *= 2.02;
-    amp *= 0.5;
-  }
-  return sum;
+float vnoise(vec2 p) {
+  vec2 i = floor(p);
+  vec2 f = fract(p);
+  vec2 u = f * f * (3.0 - 2.0 * f);
+  return mix(
+    mix(hash21(i), hash21(i + vec2(1.0, 0.0)), u.x),
+    mix(hash21(i + vec2(0.0, 1.0)), hash21(i + vec2(1.0, 1.0)), u.x),
+    u.y);
 }
 
 void main() {
   vec2 uv = vUv;
-  vec2 st = (uv - 0.5) * vec2(uResolution.x / uResolution.y, 1.0);
+  float aspect = uResolution.x / uResolution.y;
+  vec2 st = (uv - 0.5) * vec2(aspect, 1.0);
 
-  float t = uTime * 0.03 * uMotion + 8.0;
+  float t = uTime * uMotion;
 
-  // mouse influence — a very soft, wide brightening around the pointer
-  vec2  m      = uMouse * vec2(uResolution.x / uResolution.y, 1.0) * 0.5;
-  float mField = exp(-length(st - m) * 1.6) * 0.5;
+  // cylindrical curvature — tiles wrap as if on a curved studio wall
+  float curve = st.x * st.x * 0.55;
+  vec2 wall = vec2(st.x * (1.0 + curve * 0.6), st.y * (1.0 + curve));
+  wall.y += uScroll * 0.55;              // slow parallax with page scroll
+  wall.x += t * 0.004;                   // near-imperceptible drift
 
-  // large-scale, slow fbm — smooth washes of light, no folds or marbling
-  vec3 p = vec3(st * 0.55, t);
-  float n1 = fbm(p);
-  float n2 = fbm(p * 0.7 + vec3(2.7, -1.3, t * 0.4) + n1 * 0.35);
+  // tile grid
+  float N = 26.0;
+  vec2 cell = wall * N;
+  vec2 id   = floor(cell);
+  vec2 gv   = fract(cell);
 
-  // palette — near-black base with faint violet / cyan washes
-  vec3 base   = vec3(0.020, 0.020, 0.032);   // ~#050508
-  vec3 violet = vec3(0.486, 0.227, 0.929);   // #7c3aed
-  vec3 cyan   = vec3(0.024, 0.714, 0.831);   // #06b6d4
+  // grid lines
+  float line = max(
+    smoothstep(0.045, 0.0, min(gv.x, 1.0 - gv.x)),
+    smoothstep(0.045, 0.0, min(gv.y, 1.0 - gv.y)));
 
-  // scroll gently shifts the hue balance; mouse adds a whisper of light
-  float hueShift = clamp(uScroll * 0.8 + uMouse.x * 0.1, 0.0, 1.0);
-  vec3 wash = mix(violet, cyan, smoothstep(-0.5, 0.5, n2) * 0.6 + hueShift * 0.4);
+  // per-tile uneven illumination, flickering extremely slowly
+  float glowN = vnoise(id * 0.35 + vec2(t * 0.02, t * 0.013));
+  float tileLum = smoothstep(0.55, 1.0, glowN) * 0.045;
 
-  float intensity = smoothstep(-0.2, 1.0, n1) * 0.045 + mField * 0.02;
-  vec3 col = base + wash * intensity;
+  // engraved cross markers every 6th tile intersection
+  vec2 mv = fract(cell / 6.0) * 6.0;
+  vec2 cd = abs(mv - 0.0) ;
+  float cross6 = 0.0;
+  {
+    vec2 q = fract(cell / 6.0);
+    vec2 d = min(q, 1.0 - q) * 6.0;
+    float arm = 0.16;
+    float thick = 0.035;
+    cross6 = max(
+      step(d.x, thick) * step(d.y, arm),
+      step(d.y, thick) * step(d.x, arm));
+  }
 
-  // single faint aurora glow drifting down-screen with scroll
-  float glow = smoothstep(1.1, 0.0, length(st - vec2(-0.45 + uScroll * 0.9, 0.32 - uScroll * 0.6)));
-  col += mix(violet, cyan, uScroll) * glow * 0.028;
+  // mouse — a wide, faint torch on the wall
+  vec2  m      = uMouse * vec2(aspect, 1.0) * 0.5;
+  float torch  = exp(-length(st - m) * 2.2);
 
-  // vignette
-  float vig = smoothstep(1.6, 0.4, length(st));
-  col *= vig;
+  // large soft illumination pools, breathing very slowly
+  float pool = vnoise(st * 1.4 + vec2(0.0, t * 0.015)) * 0.5
+             + vnoise(st * 0.6 - vec2(t * 0.01, uScroll * 0.4)) * 0.5;
+  pool = smoothstep(0.3, 0.95, pool);
+
+  float lum = 0.0;
+  lum += line   * (0.028 + pool * 0.05 + torch * 0.06);
+  lum += tileLum * (0.5 + pool);
+  lum += cross6 * (0.05 + torch * 0.05);
+  lum += pool * 0.012;
+
+  // vignette — darkness pooling at the edges like the reference
+  float vig = smoothstep(1.55, 0.25, length(st));
+  float topShadow = smoothstep(0.75, 0.2, abs(st.y + 0.15));
+  lum *= vig * (0.55 + topShadow * 0.45);
+
+  vec3 col = vec3(0.024) + vec3(lum);
 
   gl_FragColor = vec4(col, 1.0);
 }
@@ -159,7 +131,37 @@ void main() {
 }
 `;
 
-// point sprites for the depth particle field
+// crystal facets — monochrome fresnel + moving sheen, flat-shaded
+const CRYSTAL_VERTEX = /* glsl */ `
+varying vec3 vNormal;
+varying vec3 vView;
+void main() {
+  vNormal = normalize(normalMatrix * normal);
+  vec4 mv = modelViewMatrix * vec4(position, 1.0);
+  vView = normalize(-mv.xyz);
+  gl_Position = projectionMatrix * mv;
+}
+`;
+
+const CRYSTAL_FRAGMENT = /* glsl */ `
+uniform float uTime;
+varying vec3 vNormal;
+varying vec3 vView;
+void main() {
+  vec3 n = normalize(vNormal);
+  vec3 v = normalize(vView);
+  float fresnel = pow(1.0 - abs(dot(n, v)), 2.2);
+
+  // facet shading — each face catches a different band of "studio light"
+  float facet = dot(n, normalize(vec3(0.4, 0.8, 0.45))) * 0.5 + 0.5;
+  float sheen = sin(dot(n, vec3(3.0, 5.0, 2.0)) + uTime * 0.35) * 0.5 + 0.5;
+
+  float lum = 0.03 + facet * 0.10 + sheen * 0.05 + fresnel * 0.55;
+  gl_FragColor = vec4(vec3(lum), 0.92);
+}
+`;
+
+// dust — tiny monochrome specks drifting in the dark
 const PARTICLE_VERTEX = /* glsl */ `
 uniform float uTime;
 uniform float uPixelRatio;
@@ -170,13 +172,13 @@ varying float vAlpha;
 
 void main() {
   vec3 pos = position;
-  pos.y += sin(uTime * aSpeed + pos.x * 2.0) * 0.18 * uMotion;
-  pos.x += cos(uTime * aSpeed * 0.7 + pos.y * 1.5) * 0.12 * uMotion;
+  pos.y += sin(uTime * aSpeed + pos.x * 2.0) * 0.15 * uMotion;
+  pos.x += cos(uTime * aSpeed * 0.7 + pos.y * 1.5) * 0.10 * uMotion;
 
   vec4 mv = modelViewMatrix * vec4(pos, 1.0);
   gl_Position = projectionMatrix * mv;
-  gl_PointSize = aScale * uPixelRatio * (12.0 / -mv.z);
-  vAlpha = smoothstep(-9.0, -2.0, mv.z) * 0.28;
+  gl_PointSize = aScale * uPixelRatio * (10.0 / -mv.z);
+  vAlpha = smoothstep(-9.0, -2.0, mv.z) * 0.20;
 }
 `;
 
@@ -185,7 +187,7 @@ varying float vAlpha;
 void main() {
   float d = length(gl_PointCoord - 0.5);
   float a = smoothstep(0.5, 0.05, d) * vAlpha;
-  gl_FragColor = vec4(0.55, 0.65, 1.0, a);
+  gl_FragColor = vec4(vec3(0.9), a);
 }
 `;
 
@@ -212,7 +214,7 @@ export default function ShaderBackground() {
     try {
       renderer = new WebGLRenderer({
         canvas,
-        antialias: false,
+        antialias: true,
         alpha: false,
         powerPreference: "high-performance",
       });
@@ -229,7 +231,7 @@ export default function ShaderBackground() {
     renderer.setPixelRatio(dpr);
     renderer.setSize(window.innerWidth, window.innerHeight);
 
-    // ── background fluid quad ──
+    // ── background wall quad ──
     const bgScene = new Scene();
     const bgCamera = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
     const uniforms = {
@@ -249,12 +251,29 @@ export default function ShaderBackground() {
     });
     bgScene.add(new Mesh(quadGeo, quadMat));
 
-    // ── foreground 3D layer: particles + wireframe icosahedron ──
+    // ── foreground: crystal tetrahedron + dust ──
     const fgScene = new Scene();
     const fgCamera = new PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 30);
     fgCamera.position.z = 5;
 
-    const COUNT = 140;
+    const crystalGeo = new TetrahedronGeometry(1.15, 0);
+    const crystalMat = new ShaderMaterial({
+      vertexShader: CRYSTAL_VERTEX,
+      fragmentShader: CRYSTAL_FRAGMENT,
+      uniforms: { uTime: uniforms.uTime },
+      transparent: true,
+    });
+    const crystal = new Mesh(crystalGeo, crystalMat);
+
+    const crystalEdges = new EdgesGeometry(crystalGeo);
+    const edgeMat = new LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.35 });
+    const edges = new LineSegments(crystalEdges, edgeMat);
+    crystal.add(edges);
+
+    crystal.position.set(0, -0.4, -1.2);
+    fgScene.add(crystal);
+
+    const COUNT = 90;
     const positions = new Float32Array(COUNT * 3);
     const scales = new Float32Array(COUNT);
     const speeds = new Float32Array(COUNT);
@@ -262,8 +281,8 @@ export default function ShaderBackground() {
       positions[i * 3 + 0] = (Math.random() - 0.5) * 14;
       positions[i * 3 + 1] = (Math.random() - 0.5) * 9;
       positions[i * 3 + 2] = -Math.random() * 7 - 1;
-      scales[i] = Math.random() * 2.2 + 0.6;
-      speeds[i] = Math.random() * 0.5 + 0.15;
+      scales[i] = Math.random() * 1.8 + 0.5;
+      speeds[i] = Math.random() * 0.4 + 0.1;
     }
     const particleGeo = new BufferGeometry();
     particleGeo.setAttribute("position", new Float32BufferAttribute(positions, 3));
@@ -284,18 +303,11 @@ export default function ShaderBackground() {
     const particles = new Points(particleGeo, particleMat);
     fgScene.add(particles);
 
-    const icoGeo = new IcosahedronGeometry(1.6, 1);
-    const icoEdges = new EdgesGeometry(icoGeo);
-    const icoMat = new LineBasicMaterial({ color: 0x7c3aed, transparent: true, opacity: 0.07 });
-    const ico = new LineSegments(icoEdges, icoMat);
-    ico.position.set(2.6, 0.4, -2.5);
-    fgScene.add(ico);
-
     // ── interaction state (targets set by events, lerped in the loop) ──
     const target = { mouseX: 0, mouseY: 0, scroll: 0 };
     const current = { scroll: 0, camZ: 5, camRotZ: 0 };
 
-    // debounced/throttled pointer input — one uniform update per frame at most
+    // throttled pointer input — one uniform update per frame at most
     let lastPointerTs = 0;
     const onPointerMove = (e: PointerEvent) => {
       const now = performance.now();
@@ -336,7 +348,7 @@ export default function ShaderBackground() {
       elapsed += dt;
       uniforms.uTime.value = elapsed;
 
-      // smooth interpolation — mouse ripple + cinematic camera lerp on scroll
+      // smooth interpolation — mouse + cinematic camera lerp on scroll
       const mouse = uniforms.uMouse.value;
       mouse.x += (target.mouseX - mouse.x) * 0.045;
       mouse.y += (target.mouseY - mouse.y) * 0.045;
@@ -344,20 +356,22 @@ export default function ShaderBackground() {
       current.scroll += (target.scroll - current.scroll) * 0.06;
       uniforms.uScroll.value = current.scroll;
 
-      // camera narrative: dolly in and tilt as the page scrolls
-      const targetCamZ = 5 - current.scroll * 1.9;
-      const targetRotZ = current.scroll * 0.22;
+      // camera narrative: slow dolly + drift as the page scrolls
+      const targetCamZ = 5 - current.scroll * 1.4;
+      const targetRotZ = current.scroll * 0.1;
       current.camZ += (targetCamZ - current.camZ) * 0.08;
       current.camRotZ += (targetRotZ - current.camRotZ) * 0.08;
       fgCamera.position.z = current.camZ;
-      fgCamera.position.x = mouse.x * 0.25;
-      fgCamera.position.y = mouse.y * 0.18 + current.scroll * 0.6;
+      fgCamera.position.x = mouse.x * 0.2;
+      fgCamera.position.y = mouse.y * 0.15;
       fgCamera.rotation.z = current.camRotZ;
-      fgCamera.lookAt(0, current.scroll * 0.6, -3);
+      fgCamera.lookAt(0, 0, -1.2);
 
-      ico.rotation.x = elapsed * 0.08 + current.scroll * 2.4;
-      ico.rotation.y = elapsed * 0.11;
-      ico.position.y = 0.4 + Math.sin(elapsed * 0.4) * 0.15 - current.scroll * 1.2;
+      // crystal: slow majestic turn; scroll sends it up and away
+      crystal.rotation.x = elapsed * 0.10 + current.scroll * 1.6;
+      crystal.rotation.y = elapsed * 0.16;
+      crystal.position.y = -0.4 + Math.sin(elapsed * 0.35) * 0.08 + current.scroll * 3.2;
+      crystal.position.x = mouse.x * 0.12;
 
       renderer.autoClear = true;
       renderer.render(bgScene, bgCamera);
@@ -388,7 +402,8 @@ export default function ShaderBackground() {
     const renderStaticFrame = () => {
       uniforms.uMotion.value = 0;
       uniforms.uTime.value = 12;
-      uniforms.uScroll.value = 0.25;
+      uniforms.uScroll.value = 0.15;
+      crystal.rotation.set(0.5, 0.8, 0);
       renderer.autoClear = true;
       renderer.render(bgScene, bgCamera);
       renderer.autoClear = false;
@@ -427,11 +442,12 @@ export default function ShaderBackground() {
       reducedMotionQuery.removeEventListener("change", applyMotionPreference);
       quadGeo.dispose();
       quadMat.dispose();
+      crystalGeo.dispose();
+      crystalEdges.dispose();
+      crystalMat.dispose();
+      edgeMat.dispose();
       particleGeo.dispose();
       particleMat.dispose();
-      icoGeo.dispose();
-      icoEdges.dispose();
-      icoMat.dispose();
       renderer.dispose();
       refreshRef.current = () => {};
     };

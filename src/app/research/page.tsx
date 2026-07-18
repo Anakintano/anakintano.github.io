@@ -136,7 +136,7 @@ export default function ResearchPage() {
             className="neon-card p-8 md:p-10 space-y-8"
             style={{
               boxShadow:
-                "0 0 40px rgba(124,58,237,0.12), 0 0 80px rgba(6,182,212,0.06)",
+                "0 0 40px rgba(255,255,255,0.12), 0 0 80px rgba(161,161,170,0.06)",
             }}
           >
             {/* Top badges */}
@@ -221,8 +221,8 @@ export default function ResearchPage() {
                   <div key={stage.id} className="flex items-center gap-2">
                     <div
                       style={{
-                        background: "rgba(124,58,237,0.10)",
-                        border: "1px solid rgba(124,58,237,0.4)",
+                        background: "rgba(255,255,255,0.10)",
+                        border: "1px solid rgba(255,255,255,0.4)",
                         borderRadius: "8px",
                         padding: "0.3rem 0.75rem",
                         display: "inline-flex",
@@ -230,7 +230,7 @@ export default function ResearchPage() {
                         alignItems: "center",
                         gap: "0.1rem",
                         minWidth: "7rem",
-                        boxShadow: "0 0 10px rgba(124,58,237,0.15)",
+                        boxShadow: "0 0 10px rgba(255,255,255,0.15)",
                       }}
                     >
                       <span

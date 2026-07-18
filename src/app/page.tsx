@@ -128,8 +128,8 @@ export default function HomePage() {
             position: "absolute",
             inset: 0,
             backgroundImage:
-              "linear-gradient(rgba(124,58,237,0.045) 1px, transparent 1px)," +
-              "linear-gradient(90deg, rgba(124,58,237,0.045) 1px, transparent 1px)",
+              "linear-gradient(rgba(255,255,255,0.045) 1px, transparent 1px)," +
+              "linear-gradient(90deg, rgba(255,255,255,0.045) 1px, transparent 1px)",
             backgroundSize: "52px 52px",
             pointerEvents: "none",
           }}
@@ -197,7 +197,7 @@ export default function HomePage() {
             left: 0,
             right: 0,
             height: "200px",
-            background: "linear-gradient(to bottom, transparent, rgba(5,5,8,0.75))",
+            background: "linear-gradient(to bottom, transparent, rgba(6,6,6,0.8))",
             pointerEvents: "none",
           }}
         />
@@ -207,7 +207,7 @@ export default function HomePage() {
       <motion.section
         {...fadeUp}
         style={{
-          background: "rgba(13, 13, 26, 0.62)",
+          background: "rgba(10, 10, 10, 0.6)",
           backdropFilter: "blur(10px)",
           borderTop: "1px solid var(--border)",
           borderBottom: "1px solid var(--border)",

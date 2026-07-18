@@ -2,19 +2,19 @@
 
 /* ── Design tokens ─────────────────────────────────────────────── */
 :root {
-  --bg-base:    #050508;
-  --bg-surface: #0d0d1a;
-  --bg-card:    rgba(17, 17, 40, 0.85);
-  --primary:    #7c3aed;
-  --primary-glow: rgba(124, 58, 237, 0.35);
-  --secondary:  #06b6d4;
-  --secondary-glow: rgba(6, 182, 212, 0.3);
-  --accent:     #10b981;
-  --accent-glow: rgba(16, 185, 129, 0.3);
-  --text:       #e2e8f0;
-  --muted:      #64748b;
-  --border:     rgba(124, 58, 237, 0.2);
-  --border-hover: rgba(124, 58, 237, 0.6);
+  --bg-base:    #060606;
+  --bg-surface: #0c0c0c;
+  --bg-card:    rgba(16, 16, 16, 0.82);
+  --primary:    #ffffff;
+  --primary-glow: rgba(255, 255, 255, 0.14);
+  --secondary:  #a1a1aa;
+  --secondary-glow: rgba(255, 255, 255, 0.10);
+  --accent:     #d4d4d8;
+  --accent-glow: rgba(255, 255, 255, 0.10);
+  --text:       #e7e7ea;
+  --muted:      #6b6b73;
+  --border:     rgba(255, 255, 255, 0.12);
+  --border-hover: rgba(255, 255, 255, 0.38);
 }
 
 @theme inline {
@@ -68,9 +68,9 @@ body::after {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 80% 60% at 20% 20%, rgba(124, 58, 237, 0.18) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 50% at 80% 70%, rgba(6, 182, 212, 0.12) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(16, 185, 129, 0.06) 0%, transparent 70%);
+    radial-gradient(ellipse 80% 60% at 20% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 70%, rgba(255, 255, 255, 0.035) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(255, 255, 255, 0.02) 0%, transparent 70%);
   animation: meshShift 12s ease-in-out infinite alternate;
   pointer-events: none;
 }
@@ -131,7 +131,7 @@ body::after {
 }
 .neon-card:hover {
   border-color: var(--border-hover);
-  box-shadow: 0 0 24px var(--primary-glow), inset 0 0 12px rgba(124,58,237,0.04);
+  box-shadow: 0 0 24px var(--primary-glow), inset 0 0 12px rgba(255,255,255,0.04);
   transform: translateY(-2px);
 }
 
@@ -141,8 +141,8 @@ body::after {
   align-items: center;
   gap: 0.5rem;
   padding: 0.625rem 1.5rem;
-  background: linear-gradient(135deg, var(--primary), #9333ea);
-  color: #fff;
+  background: linear-gradient(135deg, #ffffff, #d4d4d8);
+  color: #0a0a0a;
   border-radius: 8px;
   font-weight: 600;
   font-size: 0.875rem;
@@ -187,10 +187,10 @@ body::after {
   letter-spacing: 0.04em;
   font-family: var(--font-mono);
 }
-.tag-purple { background: rgba(124,58,237,0.15); color: #a78bfa; border: 1px solid rgba(124,58,237,0.3); }
-.tag-cyan   { background: rgba(6,182,212,0.12);  color: #67e8f9; border: 1px solid rgba(6,182,212,0.3); }
-.tag-green  { background: rgba(16,185,129,0.12); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
-.tag-red    { background: rgba(239,68,68,0.12);  color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
+.tag-purple { background: rgba(255,255,255,0.15); color: #e4e4e7; border: 1px solid rgba(255,255,255,0.3); }
+.tag-cyan   { background: rgba(161,161,170,0.12);  color: #c8c8cd; border: 1px solid rgba(161,161,170,0.3); }
+.tag-green  { background: rgba(212,212,216,0.12); color: #d4d4d8; border: 1px solid rgba(212,212,216,0.3); }
+.tag-red    { background: rgba(228,228,231,0.12);  color: #e4e4e7; border: 1px solid rgba(228,228,231,0.3); }
 
 /* ── Section divider ────────────────────────────────────────────── */
 .section-divider {
@@ -213,7 +213,7 @@ body::after {
 /* ── Scrollbar ──────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-base); }
-::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: #3a3a40; border-radius: 3px; }
 
 /* ── Selection ──────────────────────────────────────────────────── */
-::selection { background: rgba(124,58,237,0.4); color: #fff; }
+::selection { background: rgba(255,255,255,0.85); color: #000; }

@@ -34,8 +34,8 @@ export default function Nav() {
           <span
             className="flex items-center justify-center w-8 h-8 rounded-lg text-sm font-bold font-[var(--font-mono)]"
             style={{
-              background: "linear-gradient(135deg, var(--primary), #9333ea)",
-              color: "#fff",
+              background: "linear-gradient(135deg, #ffffff, #d4d4d8)",
+              color: "#0a0a0a",
               boxShadow: "0 0 14px var(--primary-glow)",
             }}
           >
@@ -67,7 +67,7 @@ export default function Nav() {
                   active
                     ? {
                         color: "var(--primary)",
-                        background: "rgba(124,58,237,0.12)",
+                        background: "rgba(255,255,255,0.12)",
                         boxShadow: "0 1px 0 0 var(--primary)",
                       }
                     : {}
