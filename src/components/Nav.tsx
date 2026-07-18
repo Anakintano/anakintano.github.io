@@ -1,82 +1,55 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { clsx } from "clsx";
-
 const links = [
-  { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
-  { href: "/research", label: "Research" },
-  { href: "/projects", label: "Projects" },
-  { href: "/news", label: "News" },
+  { href: "#work", label: "Work" },
+  { href: "#experience", label: "Experience" },
+  { href: "#about", label: "About" },
+  { href: "#contact", label: "Contact" },
 ];
 
 export default function Nav() {
-  const pathname = usePathname();
-
   return (
     <header
       className="sticky top-0 z-50 w-full"
       style={{
-        background: "rgba(13, 13, 26, 0.82)",
-        backdropFilter: "blur(16px)",
+        background: "rgba(6, 6, 6, 0.72)",
+        backdropFilter: "blur(14px)",
         borderBottom: "1px solid var(--border)",
       }}
     >
-      <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-        {/* Logo */}
-        <Link
-          href="/"
-          className="flex items-center gap-2.5 group"
-          style={{ textDecoration: "none" }}
+      <div className="max-w-3xl mx-auto px-5 sm:px-6 h-16 flex items-center justify-between gap-3">
+        <a
+          href="#top"
+          className="whitespace-nowrap shrink-0"
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.78rem",
+            letterSpacing: "0.06em",
+            color: "var(--text)",
+            textDecoration: "none",
+          }}
         >
-          <span
-            className="flex items-center justify-center w-8 h-8 rounded-lg text-sm font-bold font-[var(--font-mono)]"
-            style={{
-              background: "linear-gradient(135deg, #ffffff, #d4d4d8)",
-              color: "#0a0a0a",
-              boxShadow: "0 0 14px var(--primary-glow)",
-            }}
-          >
-            AS
-          </span>
-          <span
-            className="font-semibold text-sm hidden sm:block"
-            style={{ fontFamily: "var(--font-space)", color: "var(--text)" }}
-          >
-            Aditya Saxena
-          </span>
-        </Link>
+          Aditya Saxena
+        </a>
 
-        {/* Nav links */}
-        <nav className="flex items-center gap-1">
-          {links.map(({ href, label }) => {
-            const active = pathname === href;
-            return (
-              <Link
-                key={href}
-                href={href}
-                className={clsx(
-                  "px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200",
-                  active
-                    ? "text-white"
-                    : "text-[var(--muted)] hover:text-[var(--text)]"
-                )}
-                style={
-                  active
-                    ? {
-                        color: "var(--primary)",
-                        background: "rgba(255,255,255,0.12)",
-                        boxShadow: "0 1px 0 0 var(--primary)",
-                      }
-                    : {}
-                }
-              >
-                {label}
-              </Link>
-            );
-          })}
+        <nav className="flex items-center gap-3.5 sm:gap-6 overflow-x-auto">
+          {links.map(({ href, label }) => (
+            <a
+              key={href}
+              href={href}
+              className="hover:!text-[var(--text)] whitespace-nowrap shrink-0"
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.7rem",
+                letterSpacing: "0.03em",
+                color: "var(--muted)",
+                textDecoration: "none",
+                transition: "color 0.2s",
+              }}
+            >
+              {label}
+            </a>
+          ))}
         </nav>
       </div>
     </header>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, JetBrains_Mono, Inter } from "next/font/google";
+import { Space_Grotesk, JetBrains_Mono, Inter, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
@@ -23,10 +23,17 @@ const inter = Inter({
   weight: ["400", "500", "600"],
 });
 
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-serif",
+  subsets: ["latin"],
+  weight: ["400"],
+  style: ["normal", "italic"],
+});
+
 export const metadata: Metadata = {
-  title: "Aditya Saxena — AI Safety & Security",
+  title: "Aditya Saxena — Software Engineer",
   description:
-    "Researcher working on AI safety, LLM agent security, and adversarial ML. Exploring formal authorization frameworks for AI agents.",
+    "Computer science undergraduate at KIIT. Building full-stack and ML systems — internship at Hindalco, phishing detection with DistilBERT, an offline-first nutrition tracker.",
   icons: {
     icon: [
       { url: "/favicon.ico" },
@@ -36,8 +43,9 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
   openGraph: {
-    title: "Aditya Saxena — AI Safety & Security",
-    description: "Researcher working on AI safety, LLM agent security, and adversarial ML.",
+    title: "Aditya Saxena — Software Engineer",
+    description:
+      "Computer science undergraduate at KIIT, Pune. Full-stack and ML engineering — Hindalco internship, DistilBERT phishing detection, RepLift.",
     type: "website",
   },
 };
@@ -46,9 +54,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} ${inter.variable} h-full antialiased`}
+      className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} ${inter.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col text-[var(--text)]">
+      <body id="top" className="min-h-full flex flex-col text-[var(--text)]">
         <ShaderBackground />
         <Nav />
         <main className="flex-1 relative z-[1]">{children}</main>

@@ -4,25 +4,16 @@
 :root {
   --bg-base:    #060606;
   --bg-surface: #0c0c0c;
-  --bg-card:    rgba(16, 16, 16, 0.82);
-  --primary:    #ffffff;
-  --primary-glow: rgba(255, 255, 255, 0.14);
-  --secondary:  #a1a1aa;
-  --secondary-glow: rgba(255, 255, 255, 0.10);
-  --accent:     #d4d4d8;
-  --accent-glow: rgba(255, 255, 255, 0.10);
+  --bg-card:    rgba(255, 255, 255, 0.025);
   --text:       #e7e7ea;
-  --muted:      #6b6b73;
-  --border:     rgba(255, 255, 255, 0.12);
-  --border-hover: rgba(255, 255, 255, 0.38);
+  --muted:      #767680;
+  --border:     rgba(255, 255, 255, 0.10);
+  --border-hover: rgba(255, 255, 255, 0.28);
 }
 
 @theme inline {
   --color-background: var(--bg-base);
   --color-foreground: var(--text);
-  --color-primary: var(--primary);
-  --color-secondary: var(--secondary);
-  --color-accent: var(--accent);
   --color-surface: var(--bg-surface);
   --color-card: var(--bg-card);
   --color-muted: var(--muted);
@@ -47,111 +38,34 @@ body {
   overflow-x: hidden;
 }
 
-/* scanline texture overlay */
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0, 0, 0, 0.03) 2px,
-    rgba(0, 0, 0, 0.03) 4px
-  );
-  pointer-events: none;
-  z-index: 9999;
-}
-
-/* ── Animated gradient mesh bg ──────────────────────────────────── */
-.gradient-mesh {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 80% 60% at 20% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 50% at 80% 70%, rgba(255, 255, 255, 0.035) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(255, 255, 255, 0.02) 0%, transparent 70%);
-  animation: meshShift 12s ease-in-out infinite alternate;
-  pointer-events: none;
-}
-
-@keyframes meshShift {
-  0%   { background-position: 0% 0%, 100% 100%, 50% 50%; }
-  100% { background-position: 30% 20%, 70% 80%, 60% 40%; }
-}
-
-/* ── Glitch effect ──────────────────────────────────────────────── */
-.glitch {
-  position: relative;
-  display: inline-block;
-}
-.glitch::before,
-.glitch::after {
-  content: attr(data-text);
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-.glitch::before {
-  color: var(--secondary);
-  animation: glitch-clip-1 3.5s infinite linear;
-  clip-path: polygon(0 20%, 100% 20%, 100% 35%, 0 35%);
-  transform: translateX(-2px);
-  opacity: 0.7;
-}
-.glitch::after {
-  color: var(--primary);
-  animation: glitch-clip-2 3.5s infinite linear;
-  clip-path: polygon(0 65%, 100% 65%, 100% 80%, 0 80%);
-  transform: translateX(2px);
-  opacity: 0.7;
-}
-@keyframes glitch-clip-1 {
-  0%, 90%, 100% { transform: translateX(0); opacity: 0; }
-  92%           { transform: translateX(-3px); opacity: 0.7; }
-  94%           { transform: translateX(3px); opacity: 0.7; }
-  96%           { transform: translateX(-1px); opacity: 0.7; }
-}
-@keyframes glitch-clip-2 {
-  0%, 92%, 100% { transform: translateX(0); opacity: 0; }
-  94%           { transform: translateX(3px); opacity: 0.7; }
-  96%           { transform: translateX(-2px); opacity: 0.7; }
-  98%           { transform: translateX(1px); opacity: 0.7; }
-}
-
-/* ── Neon card ──────────────────────────────────────────────────── */
-.neon-card {
+/* ── Quiet card ─────────────────────────────────────────────────── */
+.quiet-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  backdrop-filter: blur(12px);
-  transition: border-color 0.25s, box-shadow 0.25s, transform 0.2s;
+  border-radius: 4px;
+  transition: border-color 0.3s ease, transform 0.3s ease;
 }
-.neon-card:hover {
+.quiet-card:hover {
   border-color: var(--border-hover);
-  box-shadow: 0 0 24px var(--primary-glow), inset 0 0 12px rgba(255,255,255,0.04);
-  transform: translateY(-2px);
 }
 
-/* ── Neon button ────────────────────────────────────────────────── */
+/* ── Buttons ────────────────────────────────────────────────────── */
 .btn-primary {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.625rem 1.5rem;
-  background: linear-gradient(135deg, #ffffff, #d4d4d8);
+  padding: 0.7rem 1.6rem;
+  background: #f2f2f2;
   color: #0a0a0a;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.875rem;
+  border-radius: 2px;
+  font-weight: 500;
+  font-size: 0.85rem;
   letter-spacing: 0.02em;
-  transition: box-shadow 0.2s, transform 0.2s;
+  transition: background 0.25s ease, transform 0.2s ease;
   text-decoration: none;
 }
 .btn-primary:hover {
-  box-shadow: 0 0 20px var(--primary-glow), 0 4px 16px rgba(0,0,0,0.4);
+  background: #ffffff;
   transform: translateY(-1px);
 }
 
@@ -159,45 +73,41 @@ body::after {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.625rem 1.5rem;
+  padding: 0.7rem 1.6rem;
   background: transparent;
   color: var(--text);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.875rem;
+  border-radius: 2px;
+  font-weight: 500;
+  font-size: 0.85rem;
   letter-spacing: 0.02em;
-  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  transition: border-color 0.25s ease, transform 0.2s ease;
   text-decoration: none;
 }
 .btn-ghost:hover {
-  border-color: var(--secondary);
-  box-shadow: 0 0 16px var(--secondary-glow);
+  border-color: var(--border-hover);
   transform: translateY(-1px);
 }
 
-/* ── Tag / chip ─────────────────────────────────────────────────── */
-.tag {
+/* ── Stack pill ─────────────────────────────────────────────────── */
+.pill {
   display: inline-flex;
   align-items: center;
-  padding: 0.2rem 0.65rem;
+  padding: 0.18rem 0.6rem;
   border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
   font-family: var(--font-mono);
+  color: var(--muted);
+  border: 1px solid var(--border);
 }
-.tag-purple { background: rgba(255,255,255,0.15); color: #e4e4e7; border: 1px solid rgba(255,255,255,0.3); }
-.tag-cyan   { background: rgba(161,161,170,0.12);  color: #c8c8cd; border: 1px solid rgba(161,161,170,0.3); }
-.tag-green  { background: rgba(212,212,216,0.12); color: #d4d4d8; border: 1px solid rgba(212,212,216,0.3); }
-.tag-red    { background: rgba(228,228,231,0.12);  color: #e4e4e7; border: 1px solid rgba(228,228,231,0.3); }
 
 /* ── Section divider ────────────────────────────────────────────── */
 .section-divider {
   width: 100%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--primary) 40%, var(--secondary) 60%, transparent);
-  opacity: 0.25;
+  background: var(--border);
   margin: 0 auto;
 }
 
@@ -205,15 +115,15 @@ body::after {
 .mono-label {
   font-family: var(--font-mono);
   font-size: 0.7rem;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--secondary);
+  color: var(--muted);
 }
 
 /* ── Scrollbar ──────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-base); }
-::-webkit-scrollbar-thumb { background: #3a3a40; border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: #333338; border-radius: 3px; }
 
 /* ── Selection ──────────────────────────────────────────────────── */
 ::selection { background: rgba(255,255,255,0.85); color: #000; }
