@@ -31,28 +31,12 @@ export default async function BlogPost({
   if (!post) notFound();
 
   return (
-    <article className="max-w-3xl mx-auto px-5 sm:px-8 pt-36 pb-24">
-      <Link
-        href="/blog"
-        className="mono-label"
-        style={{ color: "var(--ink-soft)", textDecoration: "none" }}
-      >
+    <article className="col">
+      <Link href="/blog/" className="lbl" style={{ textDecoration: "none" }}>
         ← All posts
       </Link>
-
-      <h1
-        style={{
-          fontFamily: "var(--font-serif)",
-          fontSize: "clamp(2.3rem, 6vw, 3.8rem)",
-          lineHeight: 1.05,
-          margin: "1.6rem 0 0.9rem",
-        }}
-      >
-        {post.title}
-      </h1>
-      <p className="mono-label" style={{ color: "var(--ink-soft)", marginBottom: "3rem" }}>
-        {formatDate(post.date)}
-      </p>
+      <h1 className="h1" style={{ margin: "1rem 0 0.5rem" }}>{post.title}</h1>
+      <p className="lbl" style={{ marginBottom: "2rem" }}>{formatDate(post.date)}</p>
 
       <div className="prose-blog" dangerouslySetInnerHTML={{ __html: post.html }} />
     </article>
