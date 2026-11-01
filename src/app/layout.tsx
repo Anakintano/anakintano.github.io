@@ -11,10 +11,10 @@ const body = Fira_Sans({ variable: "--font-body", subsets: ["latin"], weight: ["
 const mono = Fira_Code({ variable: "--font-mono", subsets: ["latin"], weight: ["400", "500"] });
 
 const description =
-  "DevOps / MLOps engineer. CI/CD, Docker, Kubernetes, Terraform and AWS — shipping ML systems from notebook to production. Hindalco MLOps intern.";
+  "DevOps / MLOps engineer. CI/CD, Docker, Kubernetes, Terraform and AWS. Shipping ML systems from notebook to production. Hindalco MLOps intern.";
 
 export const metadata: Metadata = {
-  title: "Aditya Saxena — DevOps & MLOps Engineer",
+  title: "Aditya Saxena · DevOps & MLOps Engineer",
   description,
   icons: {
     icon: [
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     ],
     apple: "/apple-touch-icon.png",
   },
-  openGraph: { title: "Aditya Saxena — DevOps & MLOps Engineer", description, type: "website" },
+  openGraph: { title: "Aditya Saxena · DevOps & MLOps Engineer", description, type: "website" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
